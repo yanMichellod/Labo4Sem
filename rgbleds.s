@@ -8,17 +8,17 @@
         EXPORT  ledSend
 		EXPORT  ledsRGB
 			
-resetTime	EQU	0			
+resetTime	EQU	0						
 NopTime		EQU 1
-T0HTime		EQU 4;38
+T0HTime		EQU 4
 T0LTime		EQU 86
-T1HTime		EQU 110;76
-T1LTime		EQU 40;65
+T1HTime		EQU 110
+T1LTime		EQU 40
 TRESTime 	EQU 5400
 	
-nBits 		EQU 24
+nBits 		EQU 24			;one led needs 24 bits to work
 	
-nopLoop	RN r4
+nopLoop	RN r4				;used to wait some time
 
 ;-------------------------------------------------------------------------------
 bitLow 	PROC
@@ -39,63 +39,63 @@ bitHigh PROC
 		ENDP 
 ;-------------------------------------------------------------------------------
 one		PROC
-	push	{nopLoop,lr}
-	bl		bitHigh
-	mov 	nopLoop, #T1HTime		; reset the loop counter
+	push	{nopLoop,lr}			;save the register  we will use on the stack
+	bl		bitHigh					;call the function to set a high state on the pin
+	mov 	nopLoop, #T1HTime		;prepare the counter
 whileT1H
-	subs 	nopLoop, #NopTime		;decremente loop
-	bne		whileT1H
+	subs 	nopLoop, #NopTime		;decrement loop
+	bne		whileT1H				;loop as long as it's not 0 
 	
-	bl 		bitLow
-	mov		nopLoop, #T1LTime		; reset the loop counter
+	bl 		bitLow					;call the function to set a low state on the pin
+	mov		nopLoop, #T1LTime		;prepare the counter
 whileT1L
-	subs	nopLoop, #NopTime		;decremente loop
-	bne		whileT1L
-	pop     {nopLoop,pc}
+	subs	nopLoop, #NopTime		;decrement loop
+	bne		whileT1L				;loop as long as it's not 0
+	pop     {nopLoop,pc}			;restore the register from the stack
 		ENDP
 ;-------------------------------------------------------------------------------
 zero	PROC
-	push	{nopLoop,lr}
-	bl		bitHigh
-	mov 	nopLoop, #T0HTime		; reset the loop counter
+	push	{nopLoop,lr}			;save the register  we will use on the stack
+	bl		bitHigh					;call the function to set a high state on the pin
+	mov 	nopLoop, #T0HTime		;prepare the counter
 whileT0H
-	subs 	nopLoop, #NopTime		;decremente loop
-	bne		whileT0H
+	subs 	nopLoop, #NopTime		;decrement loop
+	bne		whileT0H				;loop as long as it's not 0
 	
-	bl 		bitLow
-	mov		nopLoop, #T0LTime		; reset the loop counter
+	bl 		bitLow					;call the function to set a low state on the pin
+	mov		nopLoop, #T0LTime		;prepare the counter
 whileT0L
 	subs	nopLoop, #NopTime		;decremente loop
-	bne		whileT0L
-	pop     {nopLoop,pc}
+	bne		whileT0L				;loop as long as it's not 0
+	pop     {nopLoop,pc}			;restore the register from the stack
 		ENDP
 ;-------------------------------------------------------------------------------
 ledSend	PROC
-	push	{r9,lr}
-	mov r9,r0
-	mov	r2,#0x800000
+	push	{r9,lr}					;save the register  we will use on the stack
+	mov r9,r0						;save the 32 bits parameter inside r9, because r0 will be modified during the code execution
+	mov	r2,#0x800000				;prepare the mask : 0x00800000, wich means that we start from the bit 23
 while24bits	
-	ands r0, r9, r2					;r0 AND 0x01 stored into r2
-	beq zeroBit
-	bl   one
-	b nxtBit
+	ands r0, r9, r2					;parameter AND mask -> r0, update flags
+	beq zeroBit						;if it's equal to zero -> it sets a zero pn the pin
+	bl   one						;if not, it sets a one
+	b nxtBit						;when it comes back here, we must jump over the zero branch and go directly to nxtBit label
 zeroBit
-	bl  zero
+	bl  zero						;set a zero on the pin
 nxtBit
-	lsrs  r2, r2, #1						;shift the parameter to the right
-	bne while24bits
-	pop		{r9,pc}
+	lsrs  r2, r2, #1				;shift the mask to the right until the mask is 0x00000000
+	bne while24bits					;as long as it's not 0x00000000, start the comparison again
+	pop		{r9,pc}					;restore the register from the stack
 		ENDP
 ;-------------------------------------------------------------------------------
 ledsRGB PROC
-	push {r4, r5, r6, r7, r8, lr}
-	mov r4, r0
-	mov r5, r1
-	mov r6, r2
-	mov r7, r3
-	ldr r8,[sp,#24]
+	push {r4, r5, r6, r7, r8, lr}	;save the register  we will use on the stack
+	mov r4, r0						;save parameter 1
+	mov r5, r1						;save parameter 2
+	mov r6, r2						;save parameter 3
+	mov r7, r3						;save parameter 4
+	ldr r8,[sp,#24]					;save parameter 5 from the stack, with a 6*4 bytes offset, because of the registers we saved on the stack on line 91
 	
-	cmp r0,#1
+	cmp r0,#1						;get the amount of leds to set and branch to the right label
 	beq	LED1
 	cmp r0,#2
 	beq	LED2
@@ -135,11 +135,11 @@ LED4
 	bl ledSend
 	mov r0, r8
 	bl ledSend
-
+	
 endRGB
 	
 	
-	pop {r4, r5, r6, r7, r8, pc}
+	pop {r4, r5, r6, r7, r8, pc}			;restore the register from the stack
 	ENDP
 		
 	END
