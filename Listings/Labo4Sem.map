@@ -478,21 +478,21 @@ Image Symbol Table
     x$fpl$fpinit                             0x08000eec   Section       10  fpinit.o(x$fpl$fpinit)
     $v0                                      0x08000eec   Number         0  fpinit.o(x$fpl$fpinit)
     .constdata                               0x08000ef6   Section       24  system_stm32f7xx.o(.constdata)
-    .data                                    0x20010000   Section      220  rgbleds.o(.data)
+    .data                                    0x20010000   Section      260  rgbleds.o(.data)
     $v0                                      0x20010000   Number         0  rgbleds.o(.data)
     bitLow                                   0x20010001   Thumb Code    12  rgbleds.o(.data)
     bitHigh                                  0x2001000d   Thumb Code    12  rgbleds.o(.data)
     one                                      0x20010019   Thumb Code    28  rgbleds.o(.data)
     zero                                     0x20010035   Thumb Code    28  rgbleds.o(.data)
-    .data                                    0x200100dc   Section        9  stm32f7xx_hal.o(.data)
-    .data                                    0x200100e8   Section        4  system_stm32f7xx.o(.data)
-    .bss                                     0x200100ec   Section       20  main.o(.bss)
-    .bss                                     0x20010100   Section       96  libspace.o(.bss)
-    HEAP                                     0x20010160   Section      512  startup_stm32f746xx.o(HEAP)
-    Heap_Mem                                 0x20010160   Data         512  startup_stm32f746xx.o(HEAP)
-    STACK                                    0x20010360   Section     1024  startup_stm32f746xx.o(STACK)
-    Stack_Mem                                0x20010360   Data        1024  startup_stm32f746xx.o(STACK)
-    __initial_sp                             0x20010760   Data           0  startup_stm32f746xx.o(STACK)
+    .data                                    0x20010104   Section        9  stm32f7xx_hal.o(.data)
+    .data                                    0x20010110   Section        4  system_stm32f7xx.o(.data)
+    .bss                                     0x20010114   Section       20  main.o(.bss)
+    .bss                                     0x20010128   Section       96  libspace.o(.bss)
+    HEAP                                     0x20010188   Section      512  startup_stm32f746xx.o(HEAP)
+    Heap_Mem                                 0x20010188   Data         512  startup_stm32f746xx.o(HEAP)
+    STACK                                    0x20010388   Section     1024  startup_stm32f746xx.o(STACK)
+    Stack_Mem                                0x20010388   Data        1024  startup_stm32f746xx.o(STACK)
+    __initial_sp                             0x20010788   Data           0  startup_stm32f746xx.o(STACK)
 
     Global Symbols
 
@@ -711,7 +711,7 @@ Image Symbol Table
     HAL_RCC_OscConfig                        0x08000915   Thumb Code  1200  stm32f7xx_hal_rcc.o(i.HAL_RCC_OscConfig)
     SystemClock_Config                       0x08000dc9   Thumb Code    88  main.o(i.SystemClock_Config)
     SystemInit                               0x08000e21   Thumb Code    82  system_stm32f7xx.o(i.SystemInit)
-    main                                     0x08000e85   Thumb Code    90  main.o(i.main)
+    main                                     0x08000e85   Thumb Code    92  main.o(i.main)
     _fp_init                                 0x08000eed   Thumb Code    10  fpinit.o(x$fpl$fpinit)
     __fplib_config_fpu_vfp                   0x08000ef5   Thumb Code     0  fpinit.o(x$fpl$fpinit)
     __fplib_config_pureend_doubles           0x08000ef5   Thumb Code     0  fpinit.o(x$fpl$fpinit)
@@ -720,14 +720,14 @@ Image Symbol Table
     Region$$Table$$Base                      0x08000f10   Number         0  anon$$obj.o(Region$$Table)
     Region$$Table$$Limit                     0x08000f30   Number         0  anon$$obj.o(Region$$Table)
     ledSend                                  0x20010051   Thumb Code    34  rgbleds.o(.data)
-    ledsRGB                                  0x20010073   Thumb Code   102  rgbleds.o(.data)
-    uwTick                                   0x200100dc   Data           4  stm32f7xx_hal.o(.data)
-    uwTickPrio                               0x200100e0   Data           4  stm32f7xx_hal.o(.data)
-    uwTickFreq                               0x200100e4   Data           1  stm32f7xx_hal.o(.data)
-    SystemCoreClock                          0x200100e8   Data           4  system_stm32f7xx.o(.data)
-    GPIO_InitStruct                          0x200100ec   Data          20  main.o(.bss)
-    __libspace_start                         0x20010100   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x20010160   Data           0  libspace.o(.bss)
+    ledsRGB                                  0x20010073   Thumb Code   142  rgbleds.o(.data)
+    uwTick                                   0x20010104   Data           4  stm32f7xx_hal.o(.data)
+    uwTickPrio                               0x20010108   Data           4  stm32f7xx_hal.o(.data)
+    uwTickFreq                               0x2001010c   Data           1  stm32f7xx_hal.o(.data)
+    SystemCoreClock                          0x20010110   Data           4  system_stm32f7xx.o(.data)
+    GPIO_InitStruct                          0x20010114   Data          20  main.o(.bss)
+    __libspace_start                         0x20010128   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x20010188   Data           0  libspace.o(.bss)
 
 
 
@@ -737,7 +737,7 @@ Memory Map of the image
 
   Image Entry point : 0x080001c9
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x0000101c, Max: 0x00100000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00001044, Max: 0x00100000, ABSOLUTE)
 
     Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00000f30, Max: 0x00100000, ABSOLUTE)
 
@@ -818,23 +818,23 @@ Memory Map of the image
     0x08000f10   0x08000f10   0x00000020   Data   RO         1144    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM2 (Exec base: 0x20000000, Load base: 0x0800101c, Size: 0x00000000, Max: 0x00010000, ABSOLUTE)
+    Execution Region RW_IRAM2 (Exec base: 0x20000000, Load base: 0x08001044, Size: 0x00000000, Max: 0x00010000, ABSOLUTE)
 
     **** No section assigned to this execution region ****
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20010000, Load base: 0x08000f30, Size: 0x00000760, Max: 0x00040000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20010000, Load base: 0x08000f30, Size: 0x00000788, Max: 0x00040000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20010000   0x08000f30   0x000000dc   Code   RW          118    .data               rgbleds.o
-    0x200100dc   0x0800100c   0x00000009   Data   RW          154    .data               stm32f7xx_hal.o
-    0x200100e5   0x08001015   0x00000003   PAD
-    0x200100e8   0x08001018   0x00000004   Data   RW          942    .data               system_stm32f7xx.o
-    0x200100ec        -       0x00000014   Zero   RW            7    .bss                main.o
-    0x20010100        -       0x00000060   Zero   RW         1018    .bss                c_w.l(libspace.o)
-    0x20010160        -       0x00000200   Zero   RW          930    HEAP                startup_stm32f746xx.o
-    0x20010360        -       0x00000400   Zero   RW          929    STACK               startup_stm32f746xx.o
+    0x20010000   0x08000f30   0x00000104   Code   RW          118    .data               rgbleds.o
+    0x20010104   0x08001034   0x00000009   Data   RW          154    .data               stm32f7xx_hal.o
+    0x2001010d   0x0800103d   0x00000003   PAD
+    0x20010110   0x08001040   0x00000004   Data   RW          942    .data               system_stm32f7xx.o
+    0x20010114        -       0x00000014   Zero   RW            7    .bss                main.o
+    0x20010128        -       0x00000060   Zero   RW         1018    .bss                c_w.l(libspace.o)
+    0x20010188        -       0x00000200   Zero   RW          930    HEAP                startup_stm32f746xx.o
+    0x20010388        -       0x00000400   Zero   RW          929    STACK               startup_stm32f746xx.o
 
 
 ==============================================================================
@@ -844,8 +844,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       198         14          0          0         20     745761   main.o
-       220          4          0          0          0        584   rgbleds.o
+       198         12          0          0         20     745761   main.o
+       260          4          0          0          0        600   rgbleds.o
         64         26        456          0       1536        868   startup_stm32f746xx.o
         12          6          0          9          0       1813   stm32f7xx_hal.o
        536         52          0          0          0       2020   stm32f7xx_hal_gpio.o
@@ -854,7 +854,7 @@ Image component sizes
        100         18         24          4          0       1487   system_stm32f7xx.o
 
     ----------------------------------------------------------------------
-      3066        172        514         16       1556     758181   Object Totals
+      3106        170        514         16       1556     758197   Object Totals
         10          0         32          0          0          0   (incl. Generated)
          2          0          2          3          0          0   (incl. Padding)
 
@@ -906,15 +906,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      3594        188        514         16       1652     757973   Grand Totals
-      3594        188        514         16       1652     757973   ELF Image Totals
-      3594        188        514         16          0          0   ROM Totals
+      3634        186        514         16       1652     757989   Grand Totals
+      3634        186        514         16       1652     757989   ELF Image Totals
+      3634        186        514         16          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 4108 (   4.01kB)
+    Total RO  Size (Code + RO Data)                 4148 (   4.05kB)
     Total RW  Size (RW Data + ZI Data)              1668 (   1.63kB)
-    Total ROM Size (Code + RO Data + RW Data)       4124 (   4.03kB)
+    Total ROM Size (Code + RO Data + RW Data)       4164 (   4.07kB)
 
 ==============================================================================
 

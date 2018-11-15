@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 extern  void ledSend(uint32_t);
-extern void ledsRGB(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
+extern void ledsRGB(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
 void SystemClock_Config (void);
 GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -30,8 +30,8 @@ int main(void)
 	{
 			//ledsRGB(1, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000);
 			//ledsRGB(2, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000);
-			ledsRGB(1, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000);
-			ledsRGB(4, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
+			ledsRGB(5, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000, 0x000000ff);
+			ledsRGB(5, 0x00000000, 0x00000000, 0x00000000, 0x00000000,0x00000000);
 	}
 
 }

@@ -23,28 +23,30 @@ ARM Macro Assembler    Page 1
    12 00000000 00000001 
                        NopTime EQU              1
    13 00000000 00000004 
-                       T0HTime EQU              4           ;38
+                       T0HTime EQU              4
    14 00000000 00000056 
                        T0LTime EQU              86
    15 00000000 0000006E 
-                       T1HTime EQU              110         ;76
+                       T1HTime EQU              110
    16 00000000 00000028 
-                       T1LTime EQU              40          ;65
+                       T1LTime EQU              40
    17 00000000 00001518 
                        TRESTime
                                EQU              5400
    18 00000000         
    19 00000000 00000018 
-                       nBits   EQU              24
+                       nBits   EQU              24          ;one led needs 24 b
+                                                            its to work
    20 00000000         
    21 00000000        4 
-                       nopLoop RN               r4
+                       nopLoop RN               r4          ;used to wait some 
+                                                            time
    22 00000000         
    23 00000000         ;-------------------------------------------------------
                        ------------------------
    24 00000000         bitLow  PROC
    25 00000000 B500            push             {lr}
-   26 00000002 4835            ldr              r0,=0x40020014 ; address of PA0
+   26 00000002 483F            ldr              r0,=0x40020014 ; address of PA0
                                                              to LEDs
    27 00000004 F04F 0100       mov              r1,#0       ; value will be '0'
                                                             
@@ -57,152 +59,229 @@ ARM Macro Assembler    Page 1
                        ------------------------
    33 0000000C         bitHigh PROC
    34 0000000C B500            push             {lr}
-   35 0000000E 4832            ldr              r0,=0x40020014 ; address of PA0
+   35 0000000E 483C            ldr              r0,=0x40020014 ; address of PA0
                                                              to LEDs
    36 00000010 F04F 0101       mov              r1,#1       ; value will be '1'
                                                             
-   37 00000014 6001            str              r1,[r0]     ; place data on led
-                                                            s
 
 
 
 ARM Macro Assembler    Page 2 
 
 
+   37 00000014 6001            str              r1,[r0]     ; place data on led
+                                                            s
    38 00000016 BD00            pop              {pc}
    39 00000018                 ENDP
    40 00000018         ;-------------------------------------------------------
                        ------------------------
    41 00000018         one     PROC
-   42 00000018 B510            push             {nopLoop,lr}
-   43 0000001A F7FF FFFE       bl               bitHigh
-   44 0000001E F04F 046E       mov              nopLoop, #T1HTime ; reset the l
-                                                            oop counter
+   42 00000018 B510            push             {nopLoop,lr} ;save the register
+                                                              we will use on th
+                                                            e stack
+   43 0000001A F7FF FFFE       bl               bitHigh     ;call the function 
+                                                            to set a high state
+                                                             on the pin
+   44 0000001E F04F 046E       mov              nopLoop, #T1HTime ;prepare the 
+                                                            counter
    45 00000022         whileT1H
    46 00000022 3C01            subs             nopLoop, #NopTime 
-                                                            ;decremente loop
-   47 00000024 D1FD            bne              whileT1H
+                                                            ;decrement loop
+   47 00000024 D1FD            bne              whileT1H    ;loop as long as it
+                                                            's not 0 
    48 00000026         
-   49 00000026 F7FF FFFE       bl               bitLow
-   50 0000002A F04F 0428       mov              nopLoop, #T1LTime ; reset the l
-                                                            oop counter
+   49 00000026 F7FF FFFE       bl               bitLow      ;call the function 
+                                                            to set a low state 
+                                                            on the pin
+   50 0000002A F04F 0428       mov              nopLoop, #T1LTime ;prepare the 
+                                                            counter
    51 0000002E         whileT1L
    52 0000002E 3C01            subs             nopLoop, #NopTime 
-                                                            ;decremente loop
-   53 00000030 D1FD            bne              whileT1L
-   54 00000032 BD10            pop              {nopLoop,pc}
+                                                            ;decrement loop
+   53 00000030 D1FD            bne              whileT1L    ;loop as long as it
+                                                            's not 0
+   54 00000032 BD10            pop              {nopLoop,pc} ;restore the regis
+                                                            ter from the stack
    55 00000034                 ENDP
    56 00000034         ;-------------------------------------------------------
                        ------------------------
    57 00000034         zero    PROC
-   58 00000034 B510            push             {nopLoop,lr}
-   59 00000036 F7FF FFFE       bl               bitHigh
-   60 0000003A F04F 0404       mov              nopLoop, #T0HTime ; reset the l
-                                                            oop counter
+   58 00000034 B510            push             {nopLoop,lr} ;save the register
+                                                              we will use on th
+                                                            e stack
+   59 00000036 F7FF FFFE       bl               bitHigh     ;call the function 
+                                                            to set a high state
+                                                             on the pin
+   60 0000003A F04F 0404       mov              nopLoop, #T0HTime ;prepare the 
+                                                            counter
    61 0000003E         whileT0H
    62 0000003E 3C01            subs             nopLoop, #NopTime 
-                                                            ;decremente loop
-   63 00000040 D1FD            bne              whileT0H
+                                                            ;decrement loop
+   63 00000040 D1FD            bne              whileT0H    ;loop as long as it
+                                                            's not 0
    64 00000042         
-   65 00000042 F7FF FFFE       bl               bitLow
-   66 00000046 F04F 0456       mov              nopLoop, #T0LTime ; reset the l
-                                                            oop counter
+   65 00000042 F7FF FFFE       bl               bitLow      ;call the function 
+                                                            to set a low state 
+                                                            on the pin
+   66 00000046 F04F 0456       mov              nopLoop, #T0LTime ;prepare the 
+                                                            counter
    67 0000004A         whileT0L
    68 0000004A 3C01            subs             nopLoop, #NopTime 
                                                             ;decremente loop
-   69 0000004C D1FD            bne              whileT0L
-   70 0000004E BD10            pop              {nopLoop,pc}
-   71 00000050                 ENDP
-   72 00000050         ;-------------------------------------------------------
-                       ------------------------
-   73 00000050         ledSend PROC
-   74 00000050 E92D 4200       push             {r9,lr}
-   75 00000054 4681            mov              r9,r0
-   76 00000056 F44F 0200       mov              r2,#0x800000
-   77 0000005A         while24bits
-   78 0000005A EA19 0002       ands             r0, r9, r2  ;r0 AND 0x01 stored
-                                                             into r2
-   79 0000005E D002            beq              zeroBit
-   80 00000060 F7FF FFFE       bl               one
-   81 00000064 E001            b                nxtBit
-   82 00000066         zeroBit
-   83 00000066 F7FF FFFE       bl               zero
-   84 0000006A         nxtBit
 
 
 
 ARM Macro Assembler    Page 3 
 
 
-   85 0000006A 0852            lsrs             r2, r2, #1  ;shift the paramete
-                                                            r to the right
-   86 0000006C D1F5            bne              while24bits
-   87 0000006E E8BD 8200       pop              {r9,pc}
+   69 0000004C D1FD            bne              whileT0L    ;loop as long as it
+                                                            's not 0
+   70 0000004E BD10            pop              {nopLoop,pc} ;restore the regis
+                                                            ter from the stack
+   71 00000050                 ENDP
+   72 00000050         ;-------------------------------------------------------
+                       ------------------------
+   73 00000050         ledSend PROC
+   74 00000050 E92D 4200       push             {r9,lr}     ;save the register 
+                                                             we will use on the
+                                                             stack
+   75 00000054 4681            mov              r9,r0       ;save the 32 bits p
+                                                            arameter inside r9,
+                                                             because r0 will be
+                                                             modified during th
+                                                            e code execution
+   76 00000056 F44F 0200       mov              r2,#0x800000 ;prepare the mask 
+                                                            : 0x00800000, wich 
+                                                            means that we start
+                                                             from the bit 23
+   77 0000005A         while24bits
+   78 0000005A EA19 0002       ands             r0, r9, r2  ;parameter AND mask
+                                                             -> r0, update flag
+                                                            s
+   79 0000005E D002            beq              zeroBit     ;if it's equal to z
+                                                            ero -> it sets a ze
+                                                            ro pn the pin
+   80 00000060 F7FF FFFE       bl               one         ;if not, it sets a 
+                                                            one
+   81 00000064 E001            b                nxtBit      ;when it comes back
+                                                             here, we must jump
+                                                             over the zero bran
+                                                            ch and go directly 
+                                                            to nxtBit label
+   82 00000066         zeroBit
+   83 00000066 F7FF FFFE       bl               zero        ;set a zero on the 
+                                                            pin
+   84 0000006A         nxtBit
+   85 0000006A 0852            lsrs             r2, r2, #1  ;shift the mask to 
+                                                            the right until the
+                                                             mask is 0x00000000
+                                                            
+   86 0000006C D1F5            bne              while24bits ;as long as it's no
+                                                            t 0x00000000, start
+                                                             the comparison aga
+                                                            in
+   87 0000006E E8BD 8200       pop              {r9,pc}     ;restore the regist
+                                                            er from the stack
    88 00000072                 ENDP
    89 00000072         ;-------------------------------------------------------
                        ------------------------
    90 00000072         ledsRGB PROC
-   91 00000072 E92D 41F0       push             {r4, r5, r6, r7, r8, lr}
-   92 00000076 4604            mov              r4, r0
-   93 00000078 460D            mov              r5, r1
-   94 0000007A 4616            mov              r6, r2
-   95 0000007C 461F            mov              r7, r3
-   96 0000007E F8DD 8018       ldr              r8,[sp,#24]
-   97 00000082         
-   98 00000082 2801            cmp              r0,#1
-   99 00000084 D005            beq              LED1
-  100 00000086 2802            cmp              r0,#2
-  101 00000088 D007            beq              LED2
-  102 0000008A 2803            cmp              r0,#3
-  103 0000008C D00C            beq              LED3
-  104 0000008E 2804            cmp              r0,#4
-  105 00000090 D014            beq              LED4
-  106 00000092         
-  107 00000092         
-  108 00000092         LED1
-  109 00000092 4628            mov              r0, r5
-  110 00000094 F7FF FFFE       bl               ledSend
-  111 00000098 E01C            b                endRGB
-  112 0000009A         
-  113 0000009A         LED2
-  114 0000009A 4628            mov              r0, r5
-  115 0000009C F7FF FFFE       bl               ledSend
-  116 000000A0 4630            mov              r0, r6
-  117 000000A2 F7FF FFFE       bl               ledSend
-  118 000000A6 E015            b                endRGB
-  119 000000A8         
-  120 000000A8         LED3
-  121 000000A8 4628            mov              r0, r5
-  122 000000AA F7FF FFFE       bl               ledSend
-  123 000000AE 4630            mov              r0, r6
-  124 000000B0 F7FF FFFE       bl               ledSend
-  125 000000B4 4638            mov              r0, r7
-  126 000000B6 F7FF FFFE       bl               ledSend
-  127 000000BA E00B            b                endRGB
-  128 000000BC         
-  129 000000BC         LED4
-  130 000000BC 4628            mov              r0, r5
-  131 000000BE F7FF FFFE       bl               ledSend
-  132 000000C2 4630            mov              r0, r6
-  133 000000C4 F7FF FFFE       bl               ledSend
-  134 000000C8 4638            mov              r0, r7
-  135 000000CA F7FF FFFE       bl               ledSend
-  136 000000CE 4640            mov              r0, r8
-  137 000000D0 F7FF FFFE       bl               ledSend
-  138 000000D4         
-  139 000000D4         endRGB
-  140 000000D4         
-  141 000000D4         
+   91 00000072 E92D 43F0       push             {r4, r5, r6, r7, r8,r9, lr} ;sa
+                                                            ve the register  we
+                                                             will use on the st
+                                                            ack
+   92 00000076 4604            mov              r4, r0      ;save parameter 1
+   93 00000078 460D            mov              r5, r1      ;save parameter 2
+   94 0000007A 4616            mov              r6, r2      ;save parameter 3
 
 
 
 ARM Macro Assembler    Page 4 
 
 
-  142 000000D4 E8BD 81F0       pop              {r4, r5, r6, r7, r8, pc}
-  143 000000D8                 ENDP
-  144 000000D8         
-  145 000000D8                 END
+   95 0000007C 461F            mov              r7, r3      ;save parameter 4
+   96 0000007E F8DD 801C       ldr              r8,[sp,#28] ;save parameter 5 f
+                                                            rom the stack, with
+                                                             a 6*4 bytes offset
+                                                            , because of the re
+                                                            gisters we saved on
+                                                             the stack on line 
+                                                            91
+   97 00000082 F8DD 9020       ldr              r9,[sp,#32]
+   98 00000086         
+   99 00000086 2801            cmp              r0,#1       ;get the amount of 
+                                                            leds to set and bra
+                                                            nch to the right la
+                                                            bel
+  100 00000088 D007            beq              LED1
+  101 0000008A 2802            cmp              r0,#2
+  102 0000008C D009            beq              LED2
+  103 0000008E 2803            cmp              r0,#3
+  104 00000090 D00E            beq              LED3
+  105 00000092 2804            cmp              r0,#4
+  106 00000094 D016            beq              LED4
+  107 00000096 2805            cmp              r0,#5
+  108 00000098 D021            beq              LED5
+  109 0000009A         
+  110 0000009A         LED1
+  111 0000009A 4628            mov              r0, r5
+  112 0000009C F7FF FFFE       bl               ledSend
+  113 000000A0 E02C            b                endRGB
+  114 000000A2         
+  115 000000A2         LED2
+  116 000000A2 4628            mov              r0, r5
+  117 000000A4 F7FF FFFE       bl               ledSend
+  118 000000A8 4630            mov              r0, r6
+  119 000000AA F7FF FFFE       bl               ledSend
+  120 000000AE E025            b                endRGB
+  121 000000B0         
+  122 000000B0         LED3
+  123 000000B0 4628            mov              r0, r5
+  124 000000B2 F7FF FFFE       bl               ledSend
+  125 000000B6 4630            mov              r0, r6
+  126 000000B8 F7FF FFFE       bl               ledSend
+  127 000000BC 4638            mov              r0, r7
+  128 000000BE F7FF FFFE       bl               ledSend
+  129 000000C2 E01B            b                endRGB
+  130 000000C4         
+  131 000000C4         LED4
+  132 000000C4 4628            mov              r0, r5
+  133 000000C6 F7FF FFFE       bl               ledSend
+  134 000000CA 4630            mov              r0, r6
+  135 000000CC F7FF FFFE       bl               ledSend
+  136 000000D0 4638            mov              r0, r7
+  137 000000D2 F7FF FFFE       bl               ledSend
+  138 000000D6 4640            mov              r0, r8
+  139 000000D8 F7FF FFFE       bl               ledSend
+  140 000000DC E00E            b                endRGB
+  141 000000DE         
+  142 000000DE         LED5
+  143 000000DE 4628            mov              r0, r5
+  144 000000E0 F7FF FFFE       bl               ledSend
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  145 000000E4 4630            mov              r0, r6
+  146 000000E6 F7FF FFFE       bl               ledSend
+  147 000000EA 4638            mov              r0, r7
+  148 000000EC F7FF FFFE       bl               ledSend
+  149 000000F0 4640            mov              r0, r8
+  150 000000F2 F7FF FFFE       bl               ledSend
+  151 000000F6 4648            mov              r0, r9
+  152 000000F8 F7FF FFFE       bl               ledSend
+  153 000000FC         
+  154 000000FC         endRGB
+  155 000000FC         
+  156 000000FC         
+  157 000000FC E8BD 83F0       pop              {r4, r5, r6, r7, r8, r9, pc} ;r
+                                                            estore the register
+                                                             from the stack
+  158 00000100                 ENDP
+  159 00000100         
+  160 00000100                 END
               40020014 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M7.fp.sp --apcs=
 interwork --depend=.\objects\rgbleds.d -o.\objects\rgbleds.o -I.\RTE\Device\STM
@@ -225,38 +304,46 @@ Symbol: .data
    Uses
       None
 Comment: .data unused
-LED1 00000092
+LED1 0000009A
 
 Symbol: LED1
    Definitions
-      At line 108 in file rgbleds.s
+      At line 110 in file rgbleds.s
    Uses
-      At line 99 in file rgbleds.s
+      At line 100 in file rgbleds.s
 Comment: LED1 used once
-LED2 0000009A
+LED2 000000A2
 
 Symbol: LED2
    Definitions
-      At line 113 in file rgbleds.s
+      At line 115 in file rgbleds.s
    Uses
-      At line 101 in file rgbleds.s
+      At line 102 in file rgbleds.s
 Comment: LED2 used once
-LED3 000000A8
+LED3 000000B0
 
 Symbol: LED3
    Definitions
-      At line 120 in file rgbleds.s
+      At line 122 in file rgbleds.s
    Uses
-      At line 103 in file rgbleds.s
+      At line 104 in file rgbleds.s
 Comment: LED3 used once
-LED4 000000BC
+LED4 000000C4
 
 Symbol: LED4
    Definitions
-      At line 129 in file rgbleds.s
+      At line 131 in file rgbleds.s
    Uses
-      At line 105 in file rgbleds.s
+      At line 106 in file rgbleds.s
 Comment: LED4 used once
+LED5 000000DE
+
+Symbol: LED5
+   Definitions
+      At line 142 in file rgbleds.s
+   Uses
+      At line 108 in file rgbleds.s
+Comment: LED5 used once
 bitHigh 0000000C
 
 Symbol: bitHigh
@@ -268,6 +355,12 @@ Symbol: bitHigh
 
 bitLow 00000000
 
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
 Symbol: bitLow
    Definitions
       At line 24 in file rgbleds.s
@@ -275,21 +368,16 @@ Symbol: bitLow
       At line 49 in file rgbleds.s
       At line 65 in file rgbleds.s
 
-endRGB 000000D4
-
-
-
-ARM Macro Assembler    Page 2 Alphabetic symbol ordering
-Relocatable symbols
-
+endRGB 000000FC
 
 Symbol: endRGB
    Definitions
-      At line 139 in file rgbleds.s
+      At line 154 in file rgbleds.s
    Uses
-      At line 111 in file rgbleds.s
-      At line 118 in file rgbleds.s
-      At line 127 in file rgbleds.s
+      At line 113 in file rgbleds.s
+      At line 120 in file rgbleds.s
+      At line 129 in file rgbleds.s
+      At line 140 in file rgbleds.s
 
 ledSend 00000050
 
@@ -298,16 +386,21 @@ Symbol: ledSend
       At line 73 in file rgbleds.s
    Uses
       At line 8 in file rgbleds.s
-      At line 110 in file rgbleds.s
-      At line 115 in file rgbleds.s
+      At line 112 in file rgbleds.s
       At line 117 in file rgbleds.s
-      At line 122 in file rgbleds.s
+      At line 119 in file rgbleds.s
       At line 124 in file rgbleds.s
       At line 126 in file rgbleds.s
-      At line 131 in file rgbleds.s
+      At line 128 in file rgbleds.s
       At line 133 in file rgbleds.s
       At line 135 in file rgbleds.s
       At line 137 in file rgbleds.s
+      At line 139 in file rgbleds.s
+      At line 144 in file rgbleds.s
+      At line 146 in file rgbleds.s
+      At line 148 in file rgbleds.s
+      At line 150 in file rgbleds.s
+      At line 152 in file rgbleds.s
 
 ledsRGB 00000072
 
@@ -327,6 +420,12 @@ Symbol: nxtBit
 Comment: nxtBit used once
 one 00000018
 
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
 Symbol: one
    Definitions
       At line 41 in file rgbleds.s
@@ -341,12 +440,6 @@ Symbol: while24bits
    Uses
       At line 86 in file rgbleds.s
 Comment: while24bits used once
-
-
-
-ARM Macro Assembler    Page 3 Alphabetic symbol ordering
-Relocatable symbols
-
 whileT0H 0000003E
 
 Symbol: whileT0H
@@ -392,10 +485,16 @@ zeroBit 00000066
 Symbol: zeroBit
    Definitions
       At line 82 in file rgbleds.s
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
    Uses
       At line 79 in file rgbleds.s
 Comment: zeroBit used once
-19 symbols
+20 symbols
 
 
 
@@ -476,4 +575,4 @@ Symbol: resetTime
       None
 Comment: resetTime unused
 8 symbols
-364 symbols in table
+365 symbols in table

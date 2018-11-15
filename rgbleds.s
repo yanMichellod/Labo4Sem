@@ -87,13 +87,17 @@ nxtBit
 	pop		{r9,pc}					;restore the register from the stack
 		ENDP
 ;-------------------------------------------------------------------------------
+; work with 5 LEDs 
+;------------------------------------------------------------------------------
 ledsRGB PROC
-	push {r4, r5, r6, r7, r8, lr}	;save the register  we will use on the stack
+	push {r4, r5, r6, r7, r8, r9, lr}	;save the register  we will use on the stack
 	mov r4, r0						;save parameter 1
 	mov r5, r1						;save parameter 2
 	mov r6, r2						;save parameter 3
 	mov r7, r3						;save parameter 4
-	ldr r8,[sp,#24]					;save parameter 5 from the stack, with a 6*4 bytes offset, because of the registers we saved on the stack on line 91
+	ldr r8,[sp,#28]					;save parameter 5 from the stack, with a 10*4 bytes offset, because of the registers we saved on the stack on line 91
+	ldr r9,[sp,#32]					;save parameter 6 from the stack, with a 10*4 bytes offset, because of the registers we saved on the stack on line 91
+	
 	
 	cmp r0,#1						;get the amount of leds to set and branch to the right label
 	beq	LED1
@@ -103,7 +107,8 @@ ledsRGB PROC
 	beq	LED3
 	cmp r0,#4
 	beq	LED4
-	
+	cmp r0,#5
+	beq LED5
 	
 LED1
 	mov r0, r5
@@ -135,11 +140,24 @@ LED4
 	bl ledSend
 	mov r0, r8
 	bl ledSend
+	b endRGB
 	
+LED5
+	mov r0, r5
+	bl ledSend
+	mov r0, r6
+	bl ledSend
+	mov r0, r7
+	bl ledSend
+	mov r0, r8
+	bl ledSend
+	mov r0, r9
+	bl ledSend
+
 endRGB
 	
 	
-	pop {r4, r5, r6, r7, r8, pc}			;restore the register from the stack
+	pop {r4, r5, r6, r7, r8, r9, pc}			;restore the register from the stack
 	ENDP
 		
 	END
