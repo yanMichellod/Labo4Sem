@@ -7,6 +7,7 @@
 	AREA  |.data|, CODE, READWRITE, ALIGN=4
         EXPORT  ledSend
 		EXPORT  ledsRGB
+		EXPORT manyLedRGB
 			
 resetTime	EQU	0						
 NopTime		EQU 1
@@ -155,9 +156,31 @@ LED5
 	bl ledSend
 
 endRGB
-	
-	
+		
 	pop {r4, r5, r6, r7, r8, r9, pc}			;restore the register from the stack
+	ENDP
+		
+;-------------------------------------------------------------------------------
+; work with 5 LEDs 
+;------------------------------------------------------------------------------
+manyLedRGB PROC
+	push {r4, r5,r6, lr}	;save the register  we will use on the stack
+	mov r4, r0						;save parameter 1
+	mov r5, r1						;save parameter 2
+	mov r6, #0
+
+	cmp r4, #0
+	beq endloop
+loopLed
+	ldr r0,[r5, r6]
+	bl ledSend
+	add r6, #4
+	subs r4, #1
+	bne loopLed
+
+endloop
+		
+	pop {r4, r5, r6, pc}			;restore the register from the stack
 	ENDP
 		
 	END

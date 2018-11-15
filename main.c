@@ -1,8 +1,10 @@
 #include "stm32f7xx_hal.h"
 #include <stdint.h>
 
+
 extern  void ledSend(uint32_t);
 extern void ledsRGB(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
+extern void manyLedRGB(uint32_t , uint32_t*);
 void SystemClock_Config (void);
 GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -26,12 +28,43 @@ int main(void)
 
 	}
 	*/
+	uint32_t ledValues4[] = {0x00000000, 0x00000000, 0x00000000, 0x00000000};
+	uint32_t ledValues5[] = {0x0000ff00, 0x000000ff, 0x00ff0000, 0x0000ff00, 0x00ff00ff};
+	uint32_t ledValues8[] = {0x000000ff, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ffffff, 0x00ff0000, 0x0000ff00, 0x000000ff};
+	uint32_t ledValuesReset[] = {0x00000000, 0x00000000, 0x00000000,0x00000000, 0x00000000, 0x00000000, 0x00000000,0x00000000};
+	manyLedRGB(8, ledValuesReset);
+	uint8_t increase = 1;
+
 	for(;;)
 	{
 			//ledsRGB(1, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000);
 			//ledsRGB(2, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000);
-			ledsRGB(5, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000, 0x000000ff);
-			ledsRGB(5, 0x00000000, 0x00000000, 0x00000000, 0x00000000,0x00000000);
+			//ledsRGB(5, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00ff0000, 0x000000ff);
+ 			//ledsRGB(5, 0x00000000, 0x00000000, 0x00000000, 0x00000000,0x00000000);
+			//manyLedRGB(4, ledValues4);
+			//manyLedRGB(4, ledValuesReset);
+			//manyLedRGB(5, ledValues5);
+			//manyLedRGB(5, ledValuesReset);
+			//manyLedRGB(8, ledValues8);
+			//manyLedRGB(8, ledValuesReset);
+
+			manyLedRGB(4, ledValues4);
+		
+			if(ledValues4[0] == 0)
+			{
+					increase = 1;
+			} else if(ledValues4[0] == 0x000000ff)
+			{
+					increase = 0;
+			}
+			
+			ledValues4[0] = (increase == 0) ? (--(ledValues4[0])) : (++(ledValues4[0]));
+			ledValues4[1] = (increase == 0) ? (ledValues4[1] - 0x00000100) : (ledValues4[1] + 0x00000100);
+			ledValues4[2] = (increase == 0) ? (ledValues4[2] - 0x00010000) : (ledValues4[2] + 0x00010000);
+			ledValues4[3] = (increase == 0) ? (ledValues4[3] - 0x00010101) : (ledValues4[3] + 0x00010101);
+		
+			for(int i =0 ; i < 100000 ; i ++){
+			}
 	}
 
 }
